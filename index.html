@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 
-  <title>Agento — Building in Silence. Launching Louder.</title>
+  <title>Aagento — Building in Silence. Launching Louder.</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet" />
@@ -1147,12 +1147,12 @@
         <span class="t-dot t-dot-red"></span>
         <span class="t-dot t-dot-yel"></span>
         <span class="t-dot t-dot-grn"></span>
-        <span class="terminal-title">agento — secure terminal v1.0</span>
+        <span class="terminal-title">Aagento — secure terminal v1.0</span>
       </div>
 
       <div class="t-line" id="tl-1">
         <span class="t-prompt">▸</span>
-        <span class="t-text accent">Initializing Agento OS...</span>
+        <span class="t-text accent">Initializing Aagento OS...</span>
       </div>
 
       <div class="t-line" id="tl-2">
@@ -1182,7 +1182,7 @@
 
       <div class="t-line" id="tl-7">
         <span class="t-prompt">▸</span>
-        <span class="t-text accent">ACCESS GRANTED. Welcome to Agento.<span class="t-cursor"></span></span>
+        <span class="t-text accent">ACCESS GRANTED. Welcome to Aagento.<span class="t-cursor"></span></span>
       </div>
 
       <div class="t-progress-wrap" id="t-progress-wrap">
@@ -1383,25 +1383,20 @@
 
       const input = document.getElementById('email-input');
       const email = input.value.trim();
-
       const button = document.querySelector('.cta-btn');
-
+      const recaptchaWrap = document.querySelector('.recaptcha-wrap');
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       // Validate email
       if (!re.test(email)) {
-
         input.style.outline = '2px solid #ef4444';
-
         setTimeout(() => {
           input.style.outline = '';
         }, 1200);
-
         return;
       }
 
       // Show reCAPTCHA if not already visible
-      const recaptchaWrap = document.querySelector('.recaptcha-wrap');
       if (!recaptchaWrap.classList.contains('show')) {
         recaptchaWrap.classList.add('show');
         return;
@@ -1415,13 +1410,9 @@
       }
 
       try {
-
         // Button loading state
         button.disabled = true;
-
-        button.innerHTML = `
-        Sending...
-      `;
+        button.innerHTML = `Sending...`;
 
         // Fetch IP and Location Data
         let ipAddress = 'Unknown';
@@ -1443,8 +1434,8 @@
           console.warn('Could not fetch location data:', geoError);
         }
 
-        // Send Email
-        await emailjs.send(
+        // Send Email via EmailJS
+        const emailResponse = await emailjs.send(
           'service_9d14hky',
           'template_g32z7li',
           {
@@ -1461,38 +1452,37 @@
           }
         );
 
+        console.log('Email sent successfully:', emailResponse);
+
         // Success toast
         const toast = document.getElementById('toast');
-
         toast.innerHTML = '🎉 You are on the waitlist!';
-
         toast.classList.add('show');
 
         // Reset input
         input.value = '';
+
+        // Hide captcha after successful submission
+        recaptchaWrap.classList.remove('show');
+        grecaptcha.reset();
 
         setTimeout(() => {
           toast.classList.remove('show');
         }, 3000);
 
       } catch (error) {
-
         console.error('EmailJS Error:', error);
-
         alert('Something went wrong. Please try again.');
 
       } finally {
-
         // Restore button
         button.disabled = false;
-
         button.innerHTML = `
         Reserve My Spot
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M5 12h14M13 6l6 6-6 6"/>
         </svg>
       `;
-        grecaptcha.reset();
       }
     }
 
